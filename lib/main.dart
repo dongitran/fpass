@@ -6,10 +6,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: defaultFirebaseOptions);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(FirestoreExampleApp());
 }
 
@@ -425,15 +426,3 @@ class Movie {
     };
   }
 }
-
-const defaultFirebaseOptions = const FirebaseOptions(
-  apiKey: 'AIzaSyB7wZb2tO1-Fs6GbDADUSTs2Qs3w08Hovw',
-  appId: '1:406099696497:web:87e25e51afe982cd3574d0',
-  messagingSenderId: '406099696497',
-  projectId: 'flutterfire-e2e-tests',
-  authDomain: 'flutterfire-e2e-tests.firebaseapp.com',
-  databaseURL:
-      'https://flutterfire-e2e-tests-default-rtdb.europe-west1.firebasedatabase.app',
-  storageBucket: 'flutterfire-e2e-tests.appspot.com',
-  measurementId: 'G-JN95N1JV2E',
-);

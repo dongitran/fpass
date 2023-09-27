@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
+import './models/token.dart';
 
 import 'login_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -28,6 +35,22 @@ class _MyAppState extends State<MyApp> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool loggedIn = prefs.getBool('isLoggedIn1') ?? false;
     print(loggedIn);
+
+    final moviesRef = FirebaseFirestore.instance
+    .collection('fpassToken')
+    .withConverter<Token>(
+      fromFirestore: (snapshots, _) => Token.fromJson(snapshots.data()!),
+      toFirestore: (token, _) => token.toJson(),
+    );
+
+    final movies = await moviesRef.get();
+    print(movies);
+    print(movies.docs);
+    for (final movieDoc in movies.docs) {
+      final token = movieDoc.data();
+      print('Token: ${token.token}');
+    }
+
     setState(() {
       isLoggedIn = loggedIn;
     });

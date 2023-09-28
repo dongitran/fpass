@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+
 import 'main.dart';
+import 'utils/generator.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key});
@@ -83,12 +87,36 @@ class _LoginPageState extends State<LoginPage> {
                           String username = usernameController.text;
                           String password = passwordController.text;
 
-                          // Xử lý đăng nhập ở đây sử dụng giá trị username và password
+                          final DocumentSnapshot documentSnapshot =
+                              await FirebaseFirestore.instance
+                                  .collection('fpassToken')
+                                  .doc('document_id')
+                                  .get();
+                          if (documentSnapshot.exists) {
+                            // Lấy dữ liệu từ tài liệu
+                            final data = documentSnapshot.data();
+                            // data là một Map chứa dữ liệu từ tài liệu
+                            print('Data: $data');
+                          } else {
+                            print('Document does not exist');
+                          }
 
-                          // Ví dụ lưu dữ liệu đăng nhập thành công vào SharedPreferences
+                          String input = '$username---fpass---$password';
+                          print(input);
+                          String md5Hash = generateSha256(input);
+                          print('MD5 Hash: $md5Hash');
+
+                          Map<String, dynamic> dataToInsert = {
+                            'init': 'true',
+                          };
+                          await FirebaseFirestore.instance
+                              .collection('fpassToken')
+                              .doc(md5Hash)
+                              .set(dataToInsert);
+
                           SharedPreferences prefs =
                               await SharedPreferences.getInstance();
-                          prefs.setBool('isLoggedIn', true);
+                          prefs.setString('fpassTokenValue', md5Hash);
 
                           Navigator.pushReplacement(
                             context,

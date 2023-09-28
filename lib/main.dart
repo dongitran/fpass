@@ -11,66 +11,63 @@ import 'login_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
-
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  bool isLoggedIn = false;
-
-  @override
-  void initState() {
-    super.initState();
-    checkLoginStatus();
-  }
-
-  Future<void> checkLoginStatus() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool loggedIn = false;
-    final fpassTokenValue = prefs.getString('fpassTokenValue');
-    print(fpassTokenValue);
-    if(fpassTokenValue != null){
-      final fpassTokenModel = FirebaseFirestore.instance
-      .collection('fpassToken')
-      .withConverter<Token>(
-        fromFirestore: (snapshots, _) => Token.fromJson(snapshots.data()!),
-        toFirestore: (token, _) => token.toJson(),
-      );
-
-      final tokens = await fpassTokenModel
-                          .where('token', isEqualTo: fpassTokenValue)
-                          .limit(1)
-                          .get();
-
-      for (final token in tokens.docs) {
-        final tokenValue = token.data();
-        print('Token: ${tokenValue.token}');
-      }
-    }
-
-    setState(() {
-      isLoggedIn = loggedIn;
-    });
-  }
-
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: isLoggedIn ? const MyHomePage(title: 'Flutter Demo Home Page') : LoginPage(),
+      home: FutureBuilder<bool>(
+        future: checkLoginStatus(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Xử lý trường hợp đang kiểm tra trạng thái đăng nhập
+            return Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          } else if (snapshot.hasError) {
+            // Xử lý trường hợp có lỗi
+            return Text('Error: ${snapshot.error}');
+          } else {
+            // Xử lý trường hợp hoàn thành kiểm tra trạng thái đăng nhập
+            final isLoggedIn = snapshot.data ?? false;
+
+            return isLoggedIn
+                ? MyHomePage(title: 'Flutter Demo Home Page')
+                : LoginPage();
+          }
+        },
+      ),
     );
+  }
+
+  Future<bool> checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final fpassTokenValue = prefs.getString('fpassTokenValue');
+    print('fpassTokenValue $fpassTokenValue');
+    if (fpassTokenValue != null) {
+      final result = await FirebaseFirestore.instance
+          .collection('fpassToken')
+          .doc(fpassTokenValue)
+          .get();
+
+      if (result.exists) {
+        final data = result.data();
+        print('data: ${data}');
+        return true; // Đã đăng nhập thành công
+      }
+    }
+
+    return false; // Chưa đăng nhập
   }
 }
 
@@ -90,10 +87,6 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _counter++;
     });
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isLoggedIn', true);
-    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-    print(isLoggedIn);
   }
 
   void _navigateToLogin() {
@@ -124,19 +117,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: ElevatedButton(
-          onPressed: _navigateToLogin,
-          child: Text('Go to Login'),
-        ),
-      ),
     );
   }
 }
-
-

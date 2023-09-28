@@ -11,10 +11,13 @@ import 'login_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(MyApp());
+  await Future.delayed(const Duration(seconds: 2));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -29,7 +32,7 @@ class MyApp extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Xử lý trường hợp đang kiểm tra trạng thái đăng nhập
-            return Scaffold(
+            return const Scaffold(
               body: Center(
                 child: CircularProgressIndicator(),
               ),
@@ -42,8 +45,8 @@ class MyApp extends StatelessWidget {
             final isLoggedIn = snapshot.data ?? false;
 
             return isLoggedIn
-                ? MyHomePage(title: 'Flutter Demo Home Page')
-                : LoginPage();
+                ? const MyHomePage(title: 'Flutter Demo Home Page')
+                : const LoginPage();
           }
         },
       ),
@@ -83,18 +86,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
-  void _incrementCounter() async {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  void _navigateToLogin() {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => LoginPage(),
-    ));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Text(
               '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+              style: const TextStyle(fontSize: 24),
             ),
           ],
         ),

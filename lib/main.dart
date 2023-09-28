@@ -33,22 +33,26 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> checkLoginStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool loggedIn = prefs.getBool('isLoggedIn1') ?? false;
-    print(loggedIn);
+    bool loggedIn = false;
+    final fpassTokenValue = prefs.getString('fpassTokenValue');
+    print(fpassTokenValue);
+    if(fpassTokenValue != null){
+      final fpassTokenModel = FirebaseFirestore.instance
+      .collection('fpassToken')
+      .withConverter<Token>(
+        fromFirestore: (snapshots, _) => Token.fromJson(snapshots.data()!),
+        toFirestore: (token, _) => token.toJson(),
+      );
 
-    final moviesRef = FirebaseFirestore.instance
-    .collection('fpassToken')
-    .withConverter<Token>(
-      fromFirestore: (snapshots, _) => Token.fromJson(snapshots.data()!),
-      toFirestore: (token, _) => token.toJson(),
-    );
+      final tokens = await fpassTokenModel
+                          .where('token', isEqualTo: fpassTokenValue)
+                          .limit(1)
+                          .get();
 
-    final movies = await moviesRef.get();
-    print(movies);
-    print(movies.docs);
-    for (final movieDoc in movies.docs) {
-      final token = movieDoc.data();
-      print('Token: ${token.token}');
+      for (final token in tokens.docs) {
+        final tokenValue = token.data();
+        print('Token: ${tokenValue.token}');
+      }
     }
 
     setState(() {

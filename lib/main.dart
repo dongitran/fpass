@@ -95,18 +95,21 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
         automaticallyImplyLeading: false,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: const TextStyle(fontSize: 24),
-            ),
-          ],
+      body: Container(
+        color: Theme.of(context).colorScheme.inversePrimary,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                'You have pushed the button this many times:',
+              ),
+              Text(
+                '$_counter',
+                style: const TextStyle(fontSize: 24),
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(

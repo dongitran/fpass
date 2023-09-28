@@ -123,12 +123,47 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class SecondPage extends StatelessWidget {
+class SecondPage extends StatefulWidget {
+  @override
+  _SecondPageState createState() => _SecondPageState();
+}
+
+class _SecondPageState extends State<SecondPage> {
+  TextEditingController _applicationController = TextEditingController();
+  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+
+  bool _canAdd = false;
+
+  void _checkCanAdd() {
+    setState(() {
+      _canAdd = _applicationController.text.isNotEmpty &&
+          _usernameController.text.isNotEmpty &&
+          _passwordController.text.isNotEmpty;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _applicationController.addListener(_checkCanAdd);
+    _usernameController.addListener(_checkCanAdd);
+    _passwordController.addListener(_checkCanAdd);
+  }
+
+  @override
+  void dispose() {
+    _applicationController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Adding password'),
+        title: Text('Adding Password'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Container(
@@ -148,50 +183,76 @@ class SecondPage extends StatelessWidget {
                           Text(
                             'Application',
                             style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white), // Màu văn bản trắng
-                          ),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              border:
-                                  OutlineInputBorder(), // Viền cho TextField
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
-                          SizedBox(height: 5),
+                          TextFormField(
+                            controller: _applicationController,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding: EdgeInsets.symmetric(
+                                vertical: 10.0,
+                                horizontal: 10.0,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10),
                           Text(
                             'Username/Email',
                             style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
-                          ),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
-                          SizedBox(height: 5),
+                          TextFormField(
+                            controller: _usernameController,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding: EdgeInsets.symmetric(
+                                vertical: 10.0,
+                                horizontal: 10.0,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10),
                           Text(
                             'Password',
                             style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
                           TextFormField(
+                            controller: _passwordController,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding: EdgeInsets.symmetric(
+                                vertical: 10.0,
+                                horizontal: 10.0,
+                              ),
                             ),
                           ),
                           SizedBox(height: 15),
                           ElevatedButton(
-                            onPressed: () {
-                              // Xử lý khi nút hoàn thành được nhấn
-                            },
+                            onPressed: _canAdd
+                                ? () {
+                                    // Xử lý khi nút hoàn thành được nhấn
+                                  }
+                                : null,
                             child: Text('Add...'),
                             style: ElevatedButton.styleFrom(
-                              primary: Colors.amber, // Màu nền cho nút
+                              primary: Colors.deepPurpleAccent,
+                              onPrimary: Colors.white,
                             ),
                           ),
                         ],

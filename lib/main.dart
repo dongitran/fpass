@@ -122,46 +122,77 @@ class SecondPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Second Page'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Card(
-          elevation: 5,
+        appBar: AppBar(
+          title: Text('Second Page'),
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        ),
+        body: Container(
+          color: Theme.of(context).colorScheme.inversePrimary,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: ListView(
-              children: <Widget>[
-                Text(
-                  'Application',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            child: Card(
+              elevation: 5,
+              color: Colors.deepPurple, // Màu nền cho Card
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Text(
+                        'Application',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white), // Màu văn bản trắng
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(), // Viền cho TextField
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        'Username/Email',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        'Password',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Xử lý khi nút hoàn thành được nhấn
+                        },
+                        child: Text('Hoàn thành'),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.deepPurple, // Màu nền cho nút
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                TextFormField(),
-                SizedBox(height: 20),
-                Text(
-                  'Username/Email',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                TextFormField(),
-                SizedBox(height: 20),
-                Text(
-                  'Password',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                TextFormField(),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    // Xử lý khi nút hoàn thành được nhấn
-                  },
-                  child: Text('Hoàn thành'),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }

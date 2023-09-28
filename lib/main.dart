@@ -1,49 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
+import './models/token.dart';
 
 import 'login_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Future.delayed(const Duration(seconds: 2));
   runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  bool isLoggedIn = false;
-
-  @override
-  void initState() {
-    super.initState();
-    checkLoginStatus();
-  }
-
-  Future<void> checkLoginStatus() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool loggedIn = prefs.getBool('isLoggedIn1') ?? false;
-    print(loggedIn);
-    setState(() {
-      isLoggedIn = loggedIn;
-    });
-  }
-
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: isLoggedIn ? const MyHomePage(title: 'Flutter Demo Home Page') : LoginPage(),
+      home: FutureBuilder<bool>(
+        future: checkLoginStatus(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Xử lý trường hợp đang kiểm tra trạng thái đăng nhập
+            return const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          } else if (snapshot.hasError) {
+            // Xử lý trường hợp có lỗi
+            return Text('Error: ${snapshot.error}');
+          } else {
+            // Xử lý trường hợp hoàn thành kiểm tra trạng thái đăng nhập
+            final isLoggedIn = snapshot.data ?? false;
+
+            return isLoggedIn
+                ? const MyHomePage(title: 'Flutter Demo Home Page')
+                : const LoginPage();
+          }
+        },
+      ),
     );
+  }
+
+  Future<bool> checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final fpassTokenValue = prefs.getString('fpassTokenValue');
+    print('fpassTokenValue $fpassTokenValue');
+    if (fpassTokenValue != null) {
+      final result = await FirebaseFirestore.instance
+          .collection('fpassToken')
+          .doc(fpassTokenValue)
+          .get();
+
+      if (result.exists) {
+        final data = result.data();
+        print('data: ${data}');
+        return true; // Đã đăng nhập thành công
+      }
+    }
+
+    return false; // Chưa đăng nhập
   }
 }
 
@@ -58,22 +85,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-
-  void _incrementCounter() async {
-    setState(() {
-      _counter++;
-    });
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isLoggedIn', true);
-    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-    print(isLoggedIn);
-  }
-
-  void _navigateToLogin() {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => LoginPage(),
-    ));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,24 +103,11 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Text(
               '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+              style: const TextStyle(fontSize: 24),
             ),
           ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: ElevatedButton(
-          onPressed: _navigateToLogin,
-          child: Text('Go to Login'),
         ),
       ),
     );
   }
 }
-
-

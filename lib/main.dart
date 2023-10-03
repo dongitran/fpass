@@ -8,6 +8,7 @@ import 'firebase_options.dart';
 
 import './models/token.dart';
 import 'login_page.dart';
+import 'card.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
       title: 'fpass',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.black87),
         useMaterial3: true,
       ),
       routes: {
@@ -91,33 +92,39 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        backgroundColor: Colors.black87,
+        title: Text(
+          widget.title,
+          style: TextStyle(
+            color: Colors.white70,
+          ),
+        ),
         automaticallyImplyLeading: false,
       ),
       body: Container(
-        color: Theme.of(context).colorScheme.inversePrimary,
+        color: Colors.black87,
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              const Text(
-                'You have pushed the button this many times:',
-              ),
-              Text(
-                '$_counter',
-                style: const TextStyle(fontSize: 24),
-              ),
+              CreditCardsPage(),
+              Container(
+                margin: const EdgeInsets.only(top: 24.0),
+                alignment: Alignment.center,
+                child: FloatingActionButton(
+                  elevation: 6.0,
+                  onPressed: () {
+                    print("Add a credit card");
+                    Navigator.pushNamed(context, 'secondPage');
+                  },
+                  backgroundColor: Colors.white,
+                  mini: false,
+                  child: Icon(Icons.add),
+                ),
+              )
             ],
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(
-              context, 'secondPage'); // Điều hướng đến trang mới
-        },
-        child: Icon(Icons.add),
       ),
     );
   }
@@ -163,11 +170,18 @@ class _SecondPageState extends State<SecondPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Adding Password'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(
+          'Adding Password',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white70,
+          ),
+        ),
+        backgroundColor: Colors.black87,
       ),
       body: Container(
-        color: Theme.of(context).colorScheme.inversePrimary,
+        color: Colors.black87,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(

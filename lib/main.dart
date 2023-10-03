@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'fpass',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
             final isLoggedIn = snapshot.data ?? false;
 
             return isLoggedIn
-                ? const MyHomePage(title: 'Flutter Demo Home Page')
+                ? const MyHomePage(title: 'fpass')
                 : const LoginPage();
           }
         },

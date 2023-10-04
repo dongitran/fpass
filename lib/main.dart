@@ -32,8 +32,8 @@ class MyApp extends StatelessWidget {
       routes: {
         'secondPage': (context) => SecondPage(),
       },
-      home: FutureBuilder<bool>(
-        future: checkLoginStatus(),
+      home: FutureBuilder<DocumentSnapshot?>(
+        future: getDataFirebase(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Scaffold(
@@ -44,10 +44,32 @@ class MyApp extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
-            final isLoggedIn = snapshot.data ?? false;
+            var isLoggedIn = false;
+            var data;
+            if (snapshot.data!.exists) {
+              isLoggedIn = true;
+
+              data = snapshot.data?.data() as Map<String, dynamic>?;
+            }
+            var dataPass = null;
+            if (data != null) {
+              List<Map<String, String>> outputList = [];
+              data["pass"].forEach((inputMap) {
+                Map<String, String> outputMap = {};
+
+                inputMap.forEach((key, value) {
+                  outputMap[key] =
+                      value.toString(); // Sử dụng toString() để chuyển đổi
+                });
+
+                outputList.add(outputMap);
+              });
+
+              dataPass = outputList;
+            }
 
             return isLoggedIn
-                ? const MyHomePage(title: 'fpass')
+                ? MyHomePage(title: 'fpass', data: dataPass)
                 : const LoginPage();
           }
         },
@@ -55,7 +77,7 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  Future<bool> checkLoginStatus() async {
+  Future<DocumentSnapshot?> getDataFirebase() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final fpassTokenValue = prefs.getString('fpassTokenValue');
     print('fpassTokenValue $fpassTokenValue');
@@ -65,21 +87,18 @@ class MyApp extends StatelessWidget {
           .doc(fpassTokenValue)
           .get();
 
-      if (result.exists) {
-        final data = result.data();
-        print('data: ${data}');
-        return true;
-      }
+      return result;
     }
 
-    return false;
+    return null;
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({super.key, required this.title, required this.data});
 
   final String title;
+  final List<Map<String, String>>? data;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -105,9 +124,9 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              CardsPage(),
+              CardsPage(data: widget.data),
               Container(
-                margin: const EdgeInsets.only(top: 24.0),
+                margin: const EdgeInsets.only(top: 1.0),
                 alignment: Alignment.center,
                 child: FloatingActionButton(
                   elevation: 6.0,

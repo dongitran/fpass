@@ -121,8 +121,8 @@ class _LoginPageState extends State<LoginPage> {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  MyHomePage(title: 'Flutter Demo Home Page'),
+                              builder: (context) => MyHomePage(
+                                  title: 'Flutter Demo Home Page', data: null),
                             ),
                           );
                         }

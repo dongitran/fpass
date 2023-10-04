@@ -2,37 +2,24 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 class CardsPage extends StatefulWidget {
+  final List<Map<String, String>>? data;
+
+  const CardsPage({super.key, this.data});
+
   @override
   _CardsPageState createState() => _CardsPageState();
 }
 
 class _CardsPageState extends State<CardsPage> {
-  List<Map<String, String>> cardData = [
-    {
-      'color': '0xFF264653',
-      'username': 'dongtran',
-      'password': 'kosjrku78sjdksdfsfdswhbjskkosjrku78sjdksdfsfdswhbjsk',
-      'appName': 'TPBank',
-    },
-    {
-      'color': '0xFF2b2d42',
-      'username': 'dongtran',
-      'password': 'dsfdfhe444ddasfa',
-      'appName': 'VPBank',
-    },
-    {
-      'color': '0xFF403d39',
-      'username': 'dongtran',
-      'password': 's05kc93jcd',
-      'appName': 'Standard Chartered',
-    },
-    {
-      'color': '0xFF1c2541',
-      'username': 'thiendong.iuh@gmail.com',
-      'password': '09k6jfhe8jjks9958s',
-      'appName': 'Gmail',
-    },
-    // Add more card data here
+  var cardDataColors = [
+    '0xFF264653',
+    '0xFF2b2d42',
+    '0xFF403d39',
+    '0xFF1c2541',
+    '0xFF7f5539',
+    '0xFF4a5759',
+    '0xFF240046',
+    '0xFF003049',
   ];
 
   // List to track the visibility of passwords for each card
@@ -47,16 +34,16 @@ class _CardsPageState extends State<CardsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            for (var i = 0; i < cardData.length; i++)
+            for (var i = 0; i < widget.data!.length; i++)
               Column(
                 children: [
                   Stack(
                     children: [
                       _buildCreditCard(
-                        color: Color(int.parse(cardData[i]['color']!)),
-                        username: cardData[i]['username']!,
-                        password: cardData[i]['password']!,
-                        appName: cardData[i]['appName']!,
+                        color: getColorOrDefault(i),
+                        username: widget.data![i]['u']!,
+                        password: widget.data![i]['p']!,
+                        appName: widget.data![i]['n']!,
                         isPasswordVisible: _passwordVisible[i],
                       ),
                       Positioned(
@@ -85,7 +72,7 @@ class _CardsPageState extends State<CardsPage> {
 
                             // Set timer for hide password
                             if (_passwordVisible[i]) {
-                              _timer = Timer(Duration(seconds: 5), () {
+                              _timer = Timer(const Duration(seconds: 3), () {
                                 setState(() {
                                   _passwordVisible[i] = false;
                                 });
@@ -132,7 +119,7 @@ class _CardsPageState extends State<CardsPage> {
               padding: const EdgeInsets.only(top: 16.0, bottom: 12.0),
               child: Text(
                 '$appName',
-                style: TextStyle(
+                style: const TextStyle(
                     color: Colors.white,
                     fontSize: 21,
                     fontFamily: 'CourrierPrime'),
@@ -140,7 +127,7 @@ class _CardsPageState extends State<CardsPage> {
             ),
             Container(
               child: Column(children: [
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     Expanded(
@@ -169,8 +156,8 @@ class _CardsPageState extends State<CardsPage> {
                   children: <Widget>[
                     Expanded(
                       child: Text(
-                        '$username',
-                        style: TextStyle(
+                        username,
+                        style: const TextStyle(
                             color: Colors.white,
                             fontSize: 9,
                             fontWeight: FontWeight.bold),
@@ -179,7 +166,7 @@ class _CardsPageState extends State<CardsPage> {
                     Expanded(
                       child: Text(
                         isPasswordVisible ? '$password' : '******',
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Colors.white,
                             fontSize: 9,
                             fontWeight: FontWeight.bold),
@@ -193,5 +180,18 @@ class _CardsPageState extends State<CardsPage> {
         ),
       ),
     );
+  }
+
+  Color getColorOrDefault(int index) {
+    if (cardDataColors == null || index >= cardDataColors.length) {
+      return Colors.deepPurple; // Thay thế bằng màu mặc định của bạn
+    } else {
+      final colorString = cardDataColors[index];
+      if (colorString == null || colorString.isEmpty) {
+        return Colors.deepPurple; // Thay thế bằng màu mặc định của bạn
+      } else {
+        return Color(int.parse(colorString));
+      }
+    }
   }
 }

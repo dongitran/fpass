@@ -69,8 +69,16 @@ class _CardsPageState extends State<CardsPage> {
                             color: Colors.grey,
                           ),
                           onPressed: () {
+                            _passwordVisible.fillRange(
+                                0, _passwordVisible.length, false);
+                            _passwordVisible[i] = !_passwordVisible[i];
                             setState(() {
-                              _passwordVisible[i] = !_passwordVisible[i];
+                              _passwordVisible;
+                            });
+                            Timer(Duration(seconds: 5), () {
+                              setState(() {
+                                _passwordVisible[i] = false;
+                              });
                             });
                           },
                         ),

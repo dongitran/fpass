@@ -7,8 +7,6 @@ class CardsPage extends StatefulWidget {
 }
 
 class _CardsPageState extends State<CardsPage> {
-  bool _obscurePassword = true;
-
   List<Map<String, String>> cardData = [
     {
       'color': '0xFF264653',
@@ -37,6 +35,9 @@ class _CardsPageState extends State<CardsPage> {
     // Add more card data here
   ];
 
+  // List to track the visibility of passwords for each card
+  List<bool> _passwordVisible = List.generate(4, (index) => false);
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -45,31 +46,55 @@ class _CardsPageState extends State<CardsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            for (var data in cardData)
+            for (var i = 0; i < cardData.length; i++)
               Column(
                 children: [
-                  _buildCreditCard(
-                    color: Color(int.parse(data['color']!)),
-                    username: data['username']!,
-                    password: data['password']!,
-                    appName: data['appName']!,
+                  Stack(
+                    children: [
+                      _buildCreditCard(
+                        color: Color(int.parse(cardData[i]['color']!)),
+                        username: cardData[i]['username']!,
+                        password: cardData[i]['password']!,
+                        appName: cardData[i]['appName']!,
+                        isPasswordVisible: _passwordVisible[i],
+                      ),
+                      Positioned(
+                        top: 8.0, // Điều chỉnh vị trí theo y
+                        right: 8.0, // Điều chỉnh vị trí theo x
+                        child: IconButton(
+                          icon: Icon(
+                            _passwordVisible[i]
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Colors.grey,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _passwordVisible[i] = !_passwordVisible[i];
+                            });
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(
                     height: 15,
                   ),
                 ],
-              ),
+              )
           ],
         ),
       ),
     );
   }
 
-  Card _buildCreditCard(
-      {required Color color,
-      required String appName,
-      required String username,
-      required String password}) {
+  Card _buildCreditCard({
+    required Color color,
+    required String appName,
+    required String username,
+    required String password,
+    required bool isPasswordVisible,
+  }) {
     return Card(
       elevation: 4.0,
       color: color,
@@ -133,7 +158,7 @@ class _CardsPageState extends State<CardsPage> {
                     ),
                     Expanded(
                       child: Text(
-                        '$password',
+                        isPasswordVisible ? '$password' : '******',
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 9,

@@ -37,6 +37,7 @@ class _CardsPageState extends State<CardsPage> {
 
   // List to track the visibility of passwords for each card
   List<bool> _passwordVisible = List.generate(4, (index) => false);
+  Timer? _timer;
 
   @override
   Widget build(BuildContext context) {
@@ -69,17 +70,27 @@ class _CardsPageState extends State<CardsPage> {
                             color: Colors.grey,
                           ),
                           onPressed: () {
+                            // Check and reset timer
+                            if (_timer != null && _timer!.isActive) {
+                              _timer!.cancel();
+                            }
+
+                            _passwordVisible.fillRange(0, i, false);
                             _passwordVisible.fillRange(
-                                0, _passwordVisible.length, false);
+                                i + 1, _passwordVisible.length, false);
                             _passwordVisible[i] = !_passwordVisible[i];
                             setState(() {
                               _passwordVisible;
                             });
-                            Timer(Duration(seconds: 5), () {
-                              setState(() {
-                                _passwordVisible[i] = false;
+
+                            // Set timer for hide password
+                            if (_passwordVisible[i]) {
+                              _timer = Timer(Duration(seconds: 5), () {
+                                setState(() {
+                                  _passwordVisible[i] = false;
+                                });
                               });
-                            });
+                            }
                           },
                         ),
                       ),

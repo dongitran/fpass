@@ -1,6 +1,42 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
-class CreditCardsPage extends StatelessWidget {
+class CardsPage extends StatefulWidget {
+  @override
+  _CardsPageState createState() => _CardsPageState();
+}
+
+class _CardsPageState extends State<CardsPage> {
+  bool _obscurePassword = true;
+
+  List<Map<String, String>> cardData = [
+    {
+      'color': '0xFF264653',
+      'username': 'dongtran',
+      'password': 'kosjrku78sjdksdfsfdswhbjskkosjrku78sjdksdfsfdswhbjsk',
+      'appName': 'TPBank',
+    },
+    {
+      'color': '0xFF2b2d42',
+      'username': 'dongtran',
+      'password': 'dsfdfhe444ddasfa',
+      'appName': 'VPBank',
+    },
+    {
+      'color': '0xFF403d39',
+      'username': 'dongtran',
+      'password': 's05kc93jcd',
+      'appName': 'Standard Chartered',
+    },
+    {
+      'color': '0xFF1c2541',
+      'username': 'thiendong.iuh@gmail.com',
+      'password': '09k6jfhe8jjks9958s',
+      'appName': 'Gmail',
+    },
+    // Add more card data here
+  ];
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -9,43 +45,26 @@ class CreditCardsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _buildCreditCard(
-                color: Color(0xFF264653),
-                username: "dongtran",
-                password:
-                    "kosjrku78sjdksdfsfdswhbjskkosjrku78sjdksdfsfdswhbjsk",
-                appName: "TPBank"),
-            SizedBox(
-              height: 15,
-            ),
-            _buildCreditCard(
-                color: Color(0xFF2b2d42),
-                username: "dongtran",
-                password: "dsfdfhe444ddasfa",
-                appName: "VPBank"),
-            SizedBox(
-              height: 15,
-            ),
-            _buildCreditCard(
-                color: Color(0xFF403d39),
-                username: "dongtran",
-                password: "s05kc93jcd",
-                appName: "Standard Chartered"),
-            SizedBox(
-              height: 15,
-            ),
-            _buildCreditCard(
-                color: Color(0xFF1c2541),
-                username: "thiendong.iuh@gmail.com",
-                password: "09k6jfhe8jjks9958s",
-                appName: "Gmail"),
+            for (var data in cardData)
+              Column(
+                children: [
+                  _buildCreditCard(
+                    color: Color(int.parse(data['color']!)),
+                    username: data['username']!,
+                    password: data['password']!,
+                    appName: data['appName']!,
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                ],
+              ),
           ],
         ),
       ),
     );
   }
 
-  // Build the credit card widget
   Card _buildCreditCard(
       {required Color color,
       required String appName,
@@ -128,40 +147,6 @@ class CreditCardsPage extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-// Build Column containing the cardholder and expiration information
-  Column _buildDetailsBlockName(
-      {required String label, required String value}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          'UserName',
-          style: TextStyle(
-              color: Colors.grey, fontSize: 9, fontWeight: FontWeight.bold),
-        ),
-      ],
-    );
-  }
-
-  Column _buildDetailsBlockValue(
-      {required String label, required String value}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          '$label',
-          style: TextStyle(
-              color: Colors.grey, fontSize: 9, fontWeight: FontWeight.bold),
-        ),
-        Text(
-          '$value',
-          style: TextStyle(
-              color: Colors.white, fontSize: 10, fontWeight: FontWeight.normal),
-        )
-      ],
     );
   }
 }

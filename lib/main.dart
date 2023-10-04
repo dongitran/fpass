@@ -86,8 +86,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,14 +105,13 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              CreditCardsPage(),
+              CardsPage(),
               Container(
                 margin: const EdgeInsets.only(top: 24.0),
                 alignment: Alignment.center,
                 child: FloatingActionButton(
                   elevation: 6.0,
                   onPressed: () {
-                    print("Add a credit card");
                     Navigator.pushNamed(context, 'secondPage');
                   },
                   backgroundColor: Colors.white,
@@ -131,14 +128,16 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class SecondPage extends StatefulWidget {
+  const SecondPage({super.key});
+
   @override
   _SecondPageState createState() => _SecondPageState();
 }
 
 class _SecondPageState extends State<SecondPage> {
-  TextEditingController _applicationController = TextEditingController();
-  TextEditingController _usernameController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _applicationController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   bool _canAdd = false;
 

@@ -1,4 +1,7 @@
 # fpass
 
 Run project
-flutter run
+- flutter pub get
+- flutter run
+
+![alt Demo](./images/demo.jpg)

@@ -23,7 +23,7 @@ class _CardsPageState extends State<CardsPage> {
   ];
 
   // List to track the visibility of passwords for each card
-  List<bool> _passwordVisible = List.generate(4, (index) => false);
+  List<bool> _passwordVisible = List.generate(32, (index) => false);
   Timer? _timer;
 
   @override

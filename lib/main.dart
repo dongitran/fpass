@@ -44,15 +44,19 @@ class MyApp extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
+            print('adsfadsfkjaksdfj');
             var isLoggedIn = false;
             var data;
-            if (snapshot.data!.exists) {
+            print('4d');
+            if (snapshot.hasData && snapshot.data!.exists) {
+              print('1');
               isLoggedIn = true;
 
               data = snapshot.data?.data() as Map<String, dynamic>?;
             }
             var dataPass = null;
-            if (data != null) {
+            if (data != null && data["pass"] != null) {
+              print('5d');
               List<Map<String, String>> outputList = [];
               data["pass"].forEach((inputMap) {
                 Map<String, String> outputMap = {};
@@ -67,6 +71,7 @@ class MyApp extends StatelessWidget {
 
               dataPass = outputList;
             }
+            print('2');
 
             return isLoggedIn
                 ? MyHomePage(title: 'fpass', data: dataPass)
@@ -82,12 +87,33 @@ class MyApp extends StatelessWidget {
     final fpassTokenValue = prefs.getString('fpassTokenValue');
     print('fpassTokenValue $fpassTokenValue');
     if (fpassTokenValue != null) {
-      final result = await FirebaseFirestore.instance
-          .collection('fpassToken')
-          .doc(fpassTokenValue)
-          .get();
+      print('456');
+      try {
+        final result = await FirebaseFirestore.instance
+            .collection('fpassToken')
+            .doc('abc')
+            .get();
 
-      return result;
+        print('data: ');
+        print(result.data());
+        //for (var document in result.docs) {
+        //  print(document.data()); // In dữ liệu của tài liệu
+        //}
+        return result;
+      } catch (error) {
+        //print(error);
+        print('123');
+      }
+
+      //final result1 =
+      //    await FirebaseFirestore.instance.collection('fpassToken').get();
+      //result1.docs.forEach((doc) {
+      //  print(doc
+      //      .data()); // In dữ liệu của từng tài liệu trong bộ sưu tập 'fpassToken'
+      //});
+      //print(result1.docs);
+      print('asdf');
+      return null;
     }
 
     return null;

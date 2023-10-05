@@ -28,66 +28,69 @@ class _CardsPageState extends State<CardsPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('_CardsPageState');
+    print(widget.data);
     return SingleChildScrollView(
       child: Container(
         padding: const EdgeInsets.all(1.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            for (var i = 0; i < widget.data!.length; i++)
-              Column(
-                children: [
-                  Stack(
-                    children: [
-                      _buildCreditCard(
-                        color: getColorOrDefault(i),
-                        username: widget.data![i]['u']!,
-                        password: widget.data![i]['p']!,
-                        appName: widget.data![i]['n']!,
-                        isPasswordVisible: _passwordVisible[i],
-                      ),
-                      Positioned(
-                        top: 8.0, // Điều chỉnh vị trí theo y
-                        right: 8.0, // Điều chỉnh vị trí theo x
-                        child: IconButton(
-                          icon: Icon(
-                            _passwordVisible[i]
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                            color: Colors.grey,
-                          ),
-                          onPressed: () {
-                            // Check and reset timer
-                            if (_timer != null && _timer!.isActive) {
-                              _timer!.cancel();
-                            }
-
-                            _passwordVisible.fillRange(0, i, false);
-                            _passwordVisible.fillRange(
-                                i + 1, _passwordVisible.length, false);
-                            _passwordVisible[i] = !_passwordVisible[i];
-                            setState(() {
-                              _passwordVisible;
-                            });
-
-                            // Set timer for hide password
-                            if (_passwordVisible[i]) {
-                              _timer = Timer(const Duration(seconds: 3), () {
-                                setState(() {
-                                  _passwordVisible[i] = false;
-                                });
-                              });
-                            }
-                          },
+            if (widget.data != null)
+              for (var i = 0; i < widget.data!.length; i++)
+                Column(
+                  children: [
+                    Stack(
+                      children: [
+                        _buildCreditCard(
+                          color: getColorOrDefault(i),
+                          username: widget.data![i]['u']!,
+                          password: widget.data![i]['p']!,
+                          appName: widget.data![i]['n']!,
+                          isPasswordVisible: _passwordVisible[i],
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                ],
-              )
+                        Positioned(
+                          top: 8.0, // Điều chỉnh vị trí theo y
+                          right: 8.0, // Điều chỉnh vị trí theo x
+                          child: IconButton(
+                            icon: Icon(
+                              _passwordVisible[i]
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.grey,
+                            ),
+                            onPressed: () {
+                              // Check and reset timer
+                              if (_timer != null && _timer!.isActive) {
+                                _timer!.cancel();
+                              }
+
+                              _passwordVisible.fillRange(0, i, false);
+                              _passwordVisible.fillRange(
+                                  i + 1, _passwordVisible.length, false);
+                              _passwordVisible[i] = !_passwordVisible[i];
+                              setState(() {
+                                _passwordVisible;
+                              });
+
+                              // Set timer for hide password
+                              if (_passwordVisible[i]) {
+                                _timer = Timer(const Duration(seconds: 3), () {
+                                  setState(() {
+                                    _passwordVisible[i] = false;
+                                  });
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                  ],
+                )
           ],
         ),
       ),

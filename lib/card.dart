@@ -7,6 +7,7 @@ class CardsPage extends StatefulWidget {
   const CardsPage({super.key, this.data});
 
   @override
+  // ignore: library_private_types_in_public_api
   _CardsPageState createState() => _CardsPageState();
 }
 
@@ -23,7 +24,7 @@ class _CardsPageState extends State<CardsPage> {
   ];
 
   // List to track the visibility of passwords for each card
-  List<bool> _passwordVisible = List.generate(32, (index) => false);
+  final List<bool> _passwordVisible = List.generate(32, (index) => false);
   Timer? _timer;
 
   @override
@@ -48,8 +49,8 @@ class _CardsPageState extends State<CardsPage> {
                           isPasswordVisible: _passwordVisible[i],
                         ),
                         Positioned(
-                          top: 8.0, // Điều chỉnh vị trí theo y
-                          right: 8.0, // Điều chỉnh vị trí theo x
+                          top: 0.0,
+                          right: 8.0,
                           child: IconButton(
                             icon: Icon(
                               _passwordVisible[i]
@@ -108,7 +109,7 @@ class _CardsPageState extends State<CardsPage> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
       ),
-      margin: EdgeInsets.only(left: 10.0, right: 10.0),
+      margin: const EdgeInsets.only(left: 10.0, right: 10.0),
       child: Container(
         height: 120,
         padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
@@ -119,13 +120,14 @@ class _CardsPageState extends State<CardsPage> {
             Padding(
               padding: const EdgeInsets.only(top: 16.0, bottom: 12.0),
               child: Text(
-                '$appName',
+                appName,
                 style: const TextStyle(
                     color: Colors.white,
                     fontSize: 21,
                     fontFamily: 'CourrierPrime'),
               ),
             ),
+            // ignore: avoid_unnecessary_containers
             Container(
               child: Column(children: [
                 const Row(
@@ -166,7 +168,7 @@ class _CardsPageState extends State<CardsPage> {
                     ),
                     Expanded(
                       child: Text(
-                        isPasswordVisible ? '$password' : '******',
+                        isPasswordVisible ? password : '******',
                         style: const TextStyle(
                             color: Colors.white,
                             fontSize: 9,
@@ -184,11 +186,11 @@ class _CardsPageState extends State<CardsPage> {
   }
 
   Color getColorOrDefault(int index) {
-    if (cardDataColors == null || index >= cardDataColors.length) {
+    if (index >= cardDataColors.length) {
       return Colors.deepPurple; // Thay thế bằng màu mặc định của bạn
     } else {
       final colorString = cardDataColors[index];
-      if (colorString == null || colorString.isEmpty) {
+      if (colorString.isEmpty) {
         return Colors.deepPurple; // Thay thế bằng màu mặc định của bạn
       } else {
         return Color(int.parse(colorString));

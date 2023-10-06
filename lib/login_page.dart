@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,9 +8,10 @@ import 'main.dart';
 import 'utils/generator.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key});
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _LoginPageState createState() => _LoginPageState();
 }
 
@@ -44,12 +46,12 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: const Text('Login'),
         backgroundColor: Colors.transparent, // Đặt màu nền trong suốt
         elevation: 0, // Loại bỏ đường viền
       ),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -70,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
                     fillColor: Colors.white.withOpacity(0.7),
                   ),
                 ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 TextField(
                   controller: passwordController,
                   obscureText: true,
@@ -80,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                     fillColor: Colors.white.withOpacity(0.7),
                   ),
                 ),
-                SizedBox(height: 32.0),
+                const SizedBox(height: 32.0),
                 ElevatedButton(
                   onPressed: areFieldsValid
                       ? () async {
@@ -96,12 +98,13 @@ class _LoginPageState extends State<LoginPage> {
                             // Lấy dữ liệu từ tài liệu
                             final data = documentSnapshot.data();
                           } else {
-                            print('Document does not exist');
+                            if (kDebugMode) {
+                              print('Document does not exist');
+                            }
                           }
 
                           String input = '$username---fpass---$password';
-                          String md5Hash = generateSha256(input);
-                          print('MD5 Hash: $md5Hash');
+                          String md5Hash = generateMd5(input);
 
                           Map<String, dynamic> dataToInsert = {
                             'init': 'true',
@@ -115,16 +118,17 @@ class _LoginPageState extends State<LoginPage> {
                               await SharedPreferences.getInstance();
                           prefs.setString('fpassTokenValue', md5Hash);
 
+                          // ignore: use_build_context_synchronously
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                               builder: (context) => MyHomePage(
-                                  title: 'Flutter Demo Home Page', data: null, token: ''),
+                                  title: 'fpass', data: null, token: md5Hash),
                             ),
                           );
                         }
                       : null,
-                  child: Text('Login'),
+                  child: const Text('Login'),
                 ),
               ],
             ),

@@ -1,14 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
-import 'dart:convert';
 
 import 'firebase_options.dart';
-import 'utils/generator.dart';
-import './models/token.dart';
 import 'login_page.dart';
 import 'card.dart';
 import 'add-password.dart';
@@ -91,8 +88,7 @@ class MyApp extends StatelessWidget {
 
   Future<Map<String, dynamic>?> getDataFirebase() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final fpassTokenValue =
-        'outputListoutputListoutputList12'; //prefs.getString('fpassTokenValue');
+    final fpassTokenValue = prefs.getString('fpassTokenValue');
 
     if (fpassTokenValue != null) {
       try {
@@ -108,7 +104,9 @@ class MyApp extends StatelessWidget {
 
         return dataMap;
       } catch (error) {
-        print(error);
+        if (kDebugMode) {
+          print(error);
+        }
         return null;
       }
     }
@@ -148,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Colors.black87,
         title: Text(
           widget.title,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white70,
           ),
         ),
@@ -173,7 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             builder: (context) =>
                                 AddPasswordPage(token: widget.token)));
 
-                    if (result != null && result is Map<String, String>) {
+                    if (result != null) {
                       setState(() {
                         _data = _data != null ? [..._data!, result] : [result];
                       });

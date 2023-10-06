@@ -1,15 +1,9 @@
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
-import './models/token.dart';
-import 'login_page.dart';
-import 'card.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
-import 'dart:convert';
 
 class AddPasswordPage extends StatefulWidget {
   const AddPasswordPage({
@@ -81,7 +75,7 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
           'p': encrypter.encrypt(password, iv: iv).base64,
           'm': iv.base64
         };
-        var resultUpdate = await documentRef.update({
+        await documentRef.update({
           "pass": FieldValue.arrayUnion([dataUpdateEncrypt])
         });
 
@@ -92,7 +86,7 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
 
         // Hiển thị thông báo thành công
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Dữ liệu đã được thêm thành công.'),
           ),
         );
@@ -108,7 +102,7 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
       } else {
         // Hiển thị thông báo nếu một trong các trường nhập liệu còn trống
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Vui lòng điền đầy đủ thông tin.'),
           ),
         );
@@ -127,7 +121,7 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Adding Password',
           style: TextStyle(
             fontSize: 24,
@@ -144,6 +138,7 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
           child: Column(
             children: <Widget>[
               Expanded(
+                // ignore: avoid_unnecessary_containers
                 child: Container(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16.0, 2.0, 16.0, 16.0),
@@ -151,7 +146,7 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
-                          Text(
+                          const Text(
                             'Application',
                             style: TextStyle(
                               fontSize: 16,
@@ -161,7 +156,7 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
                           ),
                           TextFormField(
                             controller: _applicationController,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               filled: true,
                               fillColor: Colors.white,
@@ -171,8 +166,8 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 10),
-                          Text(
+                          const SizedBox(height: 10),
+                          const Text(
                             'Username/Email',
                             style: TextStyle(
                               fontSize: 16,
@@ -182,7 +177,7 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
                           ),
                           TextFormField(
                             controller: _usernameController,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               filled: true,
                               fillColor: Colors.white,
@@ -192,8 +187,8 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 10),
-                          Text(
+                          const SizedBox(height: 10),
+                          const Text(
                             'Password',
                             style: TextStyle(
                               fontSize: 16,
@@ -203,7 +198,7 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
                           ),
                           TextFormField(
                             controller: _passwordController,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               filled: true,
                               fillColor: Colors.white,
@@ -213,20 +208,20 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 15),
+                          const SizedBox(height: 15),
                           ElevatedButton(
                             onPressed: _canAdd ? _addToFirestore : null,
-                            child: Text(
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.deepPurpleAccent,
+                            ),
+                            child: const Text(
                               'Add...',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.deepPurpleAccent,
-                              onPrimary: Colors.white,
                             ),
                           ),
                         ],

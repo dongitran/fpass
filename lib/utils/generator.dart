@@ -7,7 +7,6 @@ String generateMd5(String input) {
   return md5Hash.toString(); // Chuyển đổi mã MD5 thành chuỗi hex
 }
 
-
 // Hàm để tạo mã SHA-256 từ một chuỗi
 String generateSha256(String input) {
   var bytes = utf8.encode(input); // Chuyển đổi chuỗi thành mảng byte UTF-8

@@ -8,8 +8,17 @@ import 'firebase_options.dart';
 import './models/token.dart';
 import 'login_page.dart';
 import 'card.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
+import 'dart:convert';
 
 class AddPasswordPage extends StatefulWidget {
+  const AddPasswordPage({
+    super.key,
+    required this.token,
+  });
+
+  final String token;
+
   @override
   _AddPasswordPageState createState() => _AddPasswordPageState();
 }
@@ -57,15 +66,25 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
       if (application.isNotEmpty &&
           username.isNotEmpty &&
           password.isNotEmpty) {
-        var documentRef = FirebaseFirestore.instance.collection('fpassToken').doc(
-            'd7440e379bf237113a2f30c5bbef402a1a5ce1941345442c6cb1ec0eb1a00117');
-        final dataUpdate = {
-          'n': application,
-          'u': username,
-          'p': password,
+        var documentRef = FirebaseFirestore.instance
+            .collection('fpassToken')
+            .doc(widget.token);
+
+        final key = encrypt.Key.fromUtf8('my 32 length key................');
+        final iv = encrypt.IV.fromUtf8('1234567890123456');
+        final encrypter =
+            encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.cbc));
+
+        final dataUpdateEncrypt = {
+          'n': encrypter.encrypt(application, iv: iv).base64,
+          'u': encrypter.encrypt(username, iv: iv).base64,
+          'p': encrypter.encrypt(password, iv: iv).base64,
+          'm': iv.base64
         };
+        print('dataUpdateEncrypt');
+        print(dataUpdateEncrypt);
         var resultUpdate = await documentRef.update({
-          "pass": FieldValue.arrayUnion([dataUpdate])
+          "pass": FieldValue.arrayUnion([dataUpdateEncrypt])
         });
         //await FirebaseFirestore.instance.collection('fpassToken').add({
         //  'application': application,
@@ -85,7 +104,12 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
           ),
         );
 
-        Map<String, String> result = dataUpdate;
+        final dataResponse = {
+          'n': application,
+          'u': username,
+          'p': password,
+        };
+        Map<String, String> result = dataResponse;
 
         Navigator.pop<Map<String, String>>(context, result);
       } else {

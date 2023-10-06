@@ -119,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => MyHomePage(
-                                  title: 'Flutter Demo Home Page', data: null),
+                                  title: 'Flutter Demo Home Page', data: null, token: ''),
                             ),
                           );
                         }

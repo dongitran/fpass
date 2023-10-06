@@ -45,19 +45,15 @@ class MyApp extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
-            print('adsfadsfkjaksdfj');
             var isLoggedIn = false;
             var data;
-            print('4d');
             if (snapshot.hasData && snapshot.data!.exists) {
-              print('1');
               isLoggedIn = true;
 
               data = snapshot.data?.data() as Map<String, dynamic>?;
             }
             var dataPass = null;
             if (data != null && data["pass"] != null) {
-              print('5d');
               List<Map<String, String>> outputList = [];
               data["pass"].forEach((inputMap) {
                 Map<String, String> outputMap = {};
@@ -72,7 +68,6 @@ class MyApp extends StatelessWidget {
 
               dataPass = outputList;
             }
-            print('2');
 
             return isLoggedIn
                 ? MyHomePage(title: 'fpass', data: dataPass)
@@ -86,34 +81,27 @@ class MyApp extends StatelessWidget {
   Future<DocumentSnapshot?> getDataFirebase() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final fpassTokenValue = prefs.getString('fpassTokenValue');
-    print('fpassTokenValue $fpassTokenValue');
     if (fpassTokenValue != null) {
-      print('456');
       try {
         final result = await FirebaseFirestore.instance
             .collection('fpassToken')
-            .doc('abc')
+            .doc(
+                'd7440e379bf237113a2f30c5bbef402a1a5ce1941345442c6cb1ec0eb1a00117')
             .get();
 
-        print('data: ');
-        print(result.data());
-        //for (var document in result.docs) {
-        //  print(document.data()); // In dữ liệu của tài liệu
-        //}
+        //final result1 =
+        //    await FirebaseFirestore.instance.collection('fpassToken').get();
+        //result1.docs.forEach((doc) {
+        //  print(doc
+        //      .data()); // In dữ liệu của từng tài liệu trong bộ sưu tập 'fpassToken'
+        //});
+        //print(result1.docs);
+
         return result;
       } catch (error) {
-        //print(error);
-        print('123');
+        print(error);
       }
 
-      //final result1 =
-      //    await FirebaseFirestore.instance.collection('fpassToken').get();
-      //result1.docs.forEach((doc) {
-      //  print(doc
-      //      .data()); // In dữ liệu của từng tài liệu trong bộ sưu tập 'fpassToken'
-      //});
-      //print(result1.docs);
-      print('asdf');
       return null;
     }
 
@@ -137,13 +125,11 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    print('9k');
     if (widget.data != null) {
       _data = widget.data!;
     } else {
       _data = [];
     }
-    print('9jsk');
   }
 
   @override
@@ -175,7 +161,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     final result = await Navigator.push<Map<String, String>>(
                         context,
                         MaterialPageRoute(builder: (context) => SecondPage()));
-                    print('Data from SecondPage: $result');
 
                     if (result != null && result is Map<String, String>) {
                       // Cập nhật dữ liệu trong _data bằng setState
@@ -249,9 +234,8 @@ class _SecondPageState extends State<SecondPage> {
       if (application.isNotEmpty &&
           username.isNotEmpty &&
           password.isNotEmpty) {
-        var documentRef =
-            FirebaseFirestore.instance.collection('fpassToken').doc('abc');
-        print('data');
+        var documentRef = FirebaseFirestore.instance.collection('fpassToken').doc(
+            'd7440e379bf237113a2f30c5bbef402a1a5ce1941345442c6cb1ec0eb1a00117');
         final dataUpdate = {
           'n': application,
           'u': username,

@@ -95,14 +95,11 @@ class _LoginPageState extends State<LoginPage> {
                           if (documentSnapshot.exists) {
                             // Lấy dữ liệu từ tài liệu
                             final data = documentSnapshot.data();
-                            // data là một Map chứa dữ liệu từ tài liệu
-                            print('Data: $data');
                           } else {
                             print('Document does not exist');
                           }
 
                           String input = '$username---fpass---$password';
-                          print(input);
                           String md5Hash = generateSha256(input);
                           print('MD5 Hash: $md5Hash');
 

@@ -28,8 +28,6 @@ class _CardsPageState extends State<CardsPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('_CardsPageState');
-    print(widget.data);
     return SingleChildScrollView(
       child: Container(
         padding: const EdgeInsets.all(1.0),

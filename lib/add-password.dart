@@ -70,8 +70,8 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
             .collection('fpassToken')
             .doc(widget.token);
 
-        final key = encrypt.Key.fromUtf8('my 32 length key................');
-        final iv = encrypt.IV.fromUtf8('1234567890123456');
+        final key = encrypt.Key.fromUtf8(widget.token);
+        final iv = encrypt.IV.fromLength(16);
         final encrypter =
             encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.cbc));
 
@@ -81,16 +81,9 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
           'p': encrypter.encrypt(password, iv: iv).base64,
           'm': iv.base64
         };
-        print('dataUpdateEncrypt');
-        print(dataUpdateEncrypt);
         var resultUpdate = await documentRef.update({
           "pass": FieldValue.arrayUnion([dataUpdateEncrypt])
         });
-        //await FirebaseFirestore.instance.collection('fpassToken').add({
-        //  'application': application,
-        //  'username': username,
-        //  'password': password,
-        //});
 
         // Sau khi thêm dữ liệu thành công, làm sạch các trường nhập liệu
         _applicationController.clear();

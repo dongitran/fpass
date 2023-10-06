@@ -55,11 +55,7 @@ class MyApp extends StatelessWidget {
             }
             var dataPass = null;
             if (data != null && data["pass"] != null) {
-              final key =
-                  encrypt.Key.fromUtf8('my 32 length key................');
-              final iv = encrypt.IV.fromUtf8('1234567890123456');
-              print('ádfasdf');
-              print(iv.base64);
+              final key = encrypt.Key.fromUtf8(snapshot.data?['token']);
 
               final encrypter = encrypt.Encrypter(
                   encrypt.AES(key, mode: encrypt.AESMode.cbc));
@@ -69,48 +65,28 @@ class MyApp extends StatelessWidget {
                 Map<String, String> outputMap = {};
 
                 inputMap.forEach((key, value) {
-                  print('value');
-                  print(value);
-                  //final encrypted = encrypt.Encrypted.fromBase64(value);
-                  //print(encrypted);
-                  //print(encrypted.runtimeType);
-
-                  outputMap[key] =
-                      value; //encrypter.decrypt(encrypted, iv: iv);
+                  outputMap[key] = value;
                 });
 
                 Map<String, String> outDecryptMap = {};
                 final ivBase64 = outputMap?['m'];
                 outputMap.forEach((key, value) {
                   if (key != 'm' && ivBase64 != null) {
-                    print('value');
-                    print(value);
                     final encrypted = encrypt.Encrypted.fromBase64(value);
-                    print(encrypted);
-                    print(encrypted.runtimeType);
 
                     final ivDecrypt = encrypt.IV.fromBase64(ivBase64);
-                    outDecryptMap[key] = encrypter.decrypt(encrypted, iv: iv);
+                    outDecryptMap[key] =
+                        encrypter.decrypt(encrypted, iv: ivDecrypt);
                   }
                 });
 
-                print('outputMap');
-                print(outDecryptMap);
-
                 outputList.add(outDecryptMap);
               });
-              print(outputList);
-              print(outputList?[0]['m']);
 
               dataPass = outputList;
             }
-
-            print("snapshot.data?['token']");
-            print(snapshot.data?['token']);
-
             String input = 'ádf---fpass---dfaga';
             String md5Hash = generateMd5(input);
-            print('MD5 Hash: $md5Hash');
 
             return isLoggedIn
                 ? MyHomePage(
@@ -139,34 +115,6 @@ class MyApp extends StatelessWidget {
             .collection('fpassToken')
             .doc(fpassTokenValue)
             .get();
-
-        final plainText = 'tg';
-        final key = encrypt.Key.fromUtf8('my 32 length key................');
-
-        final encrypter =
-            encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.ecb));
-
-        final encrypted = encrypter.encrypt(plainText);
-        print('runTime');
-        print(encrypted.runtimeType);
-
-        print('encrypted.base64.toString()');
-        print(encrypted.base64.toString());
-        final encrypteda =
-            encrypt.Encrypted.fromBase64(encrypted.base64.toString());
-        final decrypted = encrypter.decrypt(encrypteda);
-
-        print("encrypted");
-        print(decrypted);
-        print(encrypted.base64);
-
-        //final result1 =
-        //    await FirebaseFirestore.instance.collection('fpassToken').get();
-        //result1.docs.forEach((doc) {
-        //  print(doc
-        //      .data()); // In dữ liệu của từng tài liệu trong bộ sưu tập 'fpassToken'
-        //});
-        //print(result1.docs);
 
         final dataMap = {
           'token': fpassTokenValue,

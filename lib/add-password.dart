@@ -93,7 +93,7 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
         // Hiển thị thông báo thành công
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Dữ liệu đã được thêm vào Firestore.'),
+            content: Text('Dữ liệu đã được thêm thành công.'),
           ),
         );
 

@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -46,47 +44,38 @@ class MyApp extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
-            var isLoggedIn = false;
-            var data;
-            if (snapshot.hasData && snapshot.data?['token'] != null) {
-              isLoggedIn = true;
+            final isLoggedIn =
+                snapshot.hasData && snapshot.data?['token'] != null;
+            final data = isLoggedIn && snapshot.data != null
+                ? snapshot.data!['result'].data() as Map<String, dynamic>?
+                : null;
+            List<Map<String, String>>? dataPass;
 
-              data = snapshot.data?['result'].data() as Map<String, dynamic>?;
-            }
-            var dataPass = null;
             if (data != null && data["pass"] != null) {
               final key = encrypt.Key.fromUtf8(snapshot.data?['token']);
-
               final encrypter = encrypt.Encrypter(
                   encrypt.AES(key, mode: encrypt.AESMode.cbc));
 
-              List<Map<String, String>> outputList = [];
-              data["pass"].forEach((inputMap) {
-                Map<String, String> outputMap = {};
+              dataPass = data["pass"].map<Map<String, String>>((inputMap) {
+                final Map<String, String> outputMap = {};
 
                 inputMap.forEach((key, value) {
                   outputMap[key] = value;
                 });
 
-                Map<String, String> outDecryptMap = {};
                 final ivBase64 = outputMap?['m'];
                 outputMap.forEach((key, value) {
                   if (key != 'm' && ivBase64 != null) {
                     final encrypted = encrypt.Encrypted.fromBase64(value);
-
                     final ivDecrypt = encrypt.IV.fromBase64(ivBase64);
-                    outDecryptMap[key] =
+                    outputMap[key] =
                         encrypter.decrypt(encrypted, iv: ivDecrypt);
                   }
                 });
 
-                outputList.add(outDecryptMap);
-              });
-
-              dataPass = outputList;
+                return outputMap;
+              }).toList();
             }
-            String input = 'ádf---fpass---dfaga';
-            String md5Hash = generateMd5(input);
 
             return isLoggedIn
                 ? MyHomePage(
@@ -100,15 +89,11 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  Uint8List _removePkcs7Padding(Uint8List input) {
-    final padLength = input[input.length - 1];
-    return input.sublist(0, input.length - padLength);
-  }
-
   Future<Map<String, dynamic>?> getDataFirebase() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     final fpassTokenValue =
         'outputListoutputListoutputList12'; //prefs.getString('fpassTokenValue');
+
     if (fpassTokenValue != null) {
       try {
         final result = await FirebaseFirestore.instance
@@ -124,9 +109,8 @@ class MyApp extends StatelessWidget {
         return dataMap;
       } catch (error) {
         print(error);
+        return null;
       }
-
-      return null;
     }
 
     return null;
@@ -154,11 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    if (widget.data != null) {
-      _data = widget.data!;
-    } else {
-      _data = [];
-    }
+    _data = widget.data ?? [];
   }
 
   @override
@@ -194,13 +174,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 AddPasswordPage(token: widget.token)));
 
                     if (result != null && result is Map<String, String>) {
-                      // Cập nhật dữ liệu trong _data bằng setState
                       setState(() {
-                        if (_data != null) {
-                          _data!.add(result);
-                        } else {
-                          _data = [result];
-                        }
+                        _data = _data != null ? [..._data!, result] : [result];
                       });
                     }
                   },

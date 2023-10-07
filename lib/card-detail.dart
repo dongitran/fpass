@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 
 class DetailPage extends StatefulWidget {
   final String secretKey2FA;
@@ -64,6 +65,7 @@ class _DetailPageState extends State<DetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final currentContext = context;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black87,
@@ -191,6 +193,8 @@ class _DetailPageState extends State<DetailPage> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () async {
+                            SystemChannels.textInput
+                                .invokeMethod('TextInput.hide');
                             // Kiểm tra xem có sự thay đổi trong dữ liệu hay không
                             if (isDataChanged) {
                               final editedAppName = _appNameController.text;
@@ -199,7 +203,8 @@ class _DetailPageState extends State<DetailPage> {
                               final editedSecretKey2FA =
                                   _secretKey2FAController.text;
 
-                              var dataUpdate = widget.data;
+                              var dataUpdate =
+                                  List<Map<String, String>>.from(widget.data!);
                               final key = encrypt.Key.fromUtf8(widget.token);
                               final encrypter = encrypt.Encrypter(
                                   encrypt.AES(key, mode: encrypt.AESMode.cbc));
@@ -210,31 +215,50 @@ class _DetailPageState extends State<DetailPage> {
                               dataUpdate?[widget.index]['s'] =
                                   editedSecretKey2FA;
 
+                              var newData = [];
                               for (int i = 0; i < dataUpdate!.length; i++) {
                                 var iv =
                                     encrypt.IV.fromBase64(dataUpdate[i]['m']!);
-                                dataUpdate[i]['n'] = encrypter
+                                final n = encrypter
+                                    .encrypt(dataUpdate[i]['n']!, iv: iv)
+                                    .base64;
+                                final u = encrypter
                                     .encrypt(dataUpdate[i]['u']!, iv: iv)
                                     .base64;
-                                dataUpdate[i]['u'] = encrypter
-                                    .encrypt(dataUpdate[i]['u']!, iv: iv)
-                                    .base64;
-                                dataUpdate[i]['p'] = encrypter
+                                final p = encrypter
                                     .encrypt(dataUpdate[i]['p']!, iv: iv)
                                     .base64;
-                                dataUpdate[i]['s'] = encrypter
+                                final s = encrypter
                                     .encrypt(dataUpdate[i]['s']!, iv: iv)
                                     .base64;
+                                var encryptedData = {
+                                  'n': n,
+                                  'u': u,
+                                  'p': p,
+                                  's': s,
+                                  'm': dataUpdate[i]['m'],
+                                };
+
+                                // Thêm đối tượng Map mới vào danh sách newData
+                                newData.add(encryptedData);
                               }
 
                               var documentRef = FirebaseFirestore.instance
                                   .collection('fpassToken')
                                   .doc(widget.token);
-                              await documentRef.update({"pass": dataUpdate});
+                              await documentRef.update({"pass": newData});
+
+                              // ignore: use_build_context_synchronously
+                              Navigator.pop<List<Map<String, String>>?>(
+                                  currentContext, dataUpdate);
+
+                              return;
                             }
 
                             // Quay lại màn hình trước
-                            Navigator.pop(context);
+                            // ignore: use_build_context_synchronously
+                            Navigator.pop<List<Map<String, String>>?>(
+                                currentContext, widget.data);
                           },
                           child: const Text('Update'),
                         ),

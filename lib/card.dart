@@ -6,10 +6,9 @@ class CardsPage extends StatefulWidget {
   final List<Map<String, String>>? data;
   final String token;
 
-  const CardsPage({super.key, this.data, required this.token});
+  const CardsPage({Key? key, this.data, required this.token}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _CardsPageState createState() => _CardsPageState();
 }
 
@@ -31,29 +30,31 @@ class _CardsPageState extends State<CardsPage> {
 
   @override
   Widget build(BuildContext context) {
+    List<Map<String, String>>? dataRender = widget.data;
+
     return SingleChildScrollView(
       child: Container(
         padding: const EdgeInsets.all(1.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            if (widget.data != null)
-              for (var i = 0; i < widget.data!.length; i++)
+            if (dataRender != null)
+              for (var i = 0; i < dataRender!.length; i++)
                 Column(
                   children: [
                     Stack(
                       children: [
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             // Khi thẻ được nhấn, chuyển đến trang chi tiết và truyền dữ liệu
-                            Navigator.of(context).push(
+                            final result = await Navigator.of(context).push(
                               PageRouteBuilder(
                                 pageBuilder:
                                     (context, animation, secondaryAnimation) {
                                   return DetailPage(
                                     secretKey2FA: '',
                                     token: widget.token,
-                                    data: widget.data,
+                                    data: dataRender,
                                     index: i,
                                   );
                                 },
@@ -70,12 +71,19 @@ class _CardsPageState extends State<CardsPage> {
                                 },
                               ),
                             );
+
+                            // Cập nhật widget.data với giá trị mới
+                            if (result != null) {
+                              setState(() {
+                                dataRender = result;
+                              });
+                            }
                           },
                           child: _buildCreditCard(
                             color: getColorOrDefault(i),
-                            username: widget.data![i]['u']!,
-                            password: widget.data![i]['p']!,
-                            appName: widget.data![i]['n']!,
+                            username: dataRender![i]['u']!,
+                            password: dataRender![i]['p']!,
+                            appName: dataRender![i]['n']!,
                             isPasswordVisible: _passwordVisible[i],
                           ),
                         ),

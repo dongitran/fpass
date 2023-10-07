@@ -95,6 +95,8 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
           'n': application,
           'u': username,
           'p': password,
+          's': password,
+          'm': iv.base64,
         };
         Map<String, String> result = dataResponse;
 

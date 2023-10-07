@@ -24,14 +24,6 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
 
   bool _canAdd = false;
 
-  void _checkCanAdd() {
-    setState(() {
-      _canAdd = _applicationController.text.isNotEmpty &&
-          _usernameController.text.isNotEmpty &&
-          _passwordController.text.isNotEmpty;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
@@ -46,6 +38,14 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
     _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  void _checkCanAdd() {
+    setState(() {
+      _canAdd = _applicationController.text.isNotEmpty &&
+          _usernameController.text.isNotEmpty &&
+          _passwordController.text.isNotEmpty;
+    });
   }
 
   Future<void> _addToFirestore() async {

@@ -73,6 +73,7 @@ class _CardsPageState extends State<CardsPage> {
                             );
 
                             // Cập nhật widget.data với giá trị mới
+                            print(result);
                             if (result != null) {
                               setState(() {
                                 dataRender = result;
@@ -80,6 +81,7 @@ class _CardsPageState extends State<CardsPage> {
                             }
                           },
                           child: _buildCreditCard(
+                            cardKey: GlobalKey(),
                             color: getColorOrDefault(i),
                             username: dataRender![i]['u']!,
                             password: dataRender![i]['p']!,
@@ -141,8 +143,10 @@ class _CardsPageState extends State<CardsPage> {
     required String username,
     required String password,
     required bool isPasswordVisible,
+    required Key cardKey,
   }) {
     return Card(
+      key: cardKey,
       elevation: 4.0,
       color: color,
       shape: RoundedRectangleBorder(

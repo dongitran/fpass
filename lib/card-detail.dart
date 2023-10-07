@@ -262,6 +262,76 @@ class _DetailPageState extends State<DetailPage> {
                           },
                           child: const Text('Update'),
                         ),
+                      ),
+                      const SizedBox(height: 12),
+                      Container(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            // Xóa dữ liệu khỏi Firestore và response về một danh sách trống
+                            var documentRef = FirebaseFirestore.instance
+                                .collection('fpassToken')
+                                .doc(widget.token);
+
+                            var dataUpdate =
+                                List<Map<String, String>>.from(widget.data!);
+                            final key = encrypt.Key.fromUtf8(widget.token);
+                            final encrypter = encrypt.Encrypter(
+                                encrypt.AES(key, mode: encrypt.AESMode.cbc));
+
+                            var newData = List<Map<String, String>>.from([]);
+                            for (int i = 0; i < dataUpdate!.length; i++) {
+                              if (i != widget.index) {
+                                var dataNoEncrypt = {
+                                  'n': dataUpdate[i]['n'] ?? '',
+                                  'u': dataUpdate[i]['u'] ?? '',
+                                  'p': dataUpdate[i]['p'] ?? '',
+                                  's': dataUpdate[i]['s'] ?? '',
+                                  'm': dataUpdate[i]['m'] ?? '',
+                                };
+                                newData.add(dataNoEncrypt);
+                              }
+                            }
+
+                            var newDataEncrypt = [];
+                            for (int i = 0; i < newData!.length; i++) {
+                              var iv = encrypt.IV.fromBase64(newData[i]['m']!);
+                              final n = encrypter
+                                  .encrypt(newData[i]['n']!, iv: iv)
+                                  .base64;
+                              final u = encrypter
+                                  .encrypt(newData[i]['u']!, iv: iv)
+                                  .base64;
+                              final p = encrypter
+                                  .encrypt(newData[i]['p']!, iv: iv)
+                                  .base64;
+                              final s = encrypter
+                                  .encrypt(newData[i]['s']!, iv: iv)
+                                  .base64;
+
+                              // Thêm đối tượng Map mới vào danh sách newData
+                              newDataEncrypt.add({
+                                'n': n,
+                                'u': u,
+                                'p': p,
+                                's': s,
+                                'm': newData[i]['m'] ?? '',
+                              });
+                            }
+
+                            print(newData);
+
+                            await documentRef.update({"pass": newDataEncrypt});
+
+                            // ignore: use_build_context_synchronously
+                            Navigator.pop<List<Map<String, String>>?>(
+                                currentContext, newData);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red, // Màu nút Delete là đỏ
+                          ),
+                          child: const Text('Delete'),
+                        ),
                       )
                     ],
                   ),

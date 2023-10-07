@@ -20,15 +20,11 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
   final TextEditingController _applicationController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  bool _canAdd = false;
+  final TextEditingController _secretKey2FAController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _applicationController.addListener(_checkCanAdd);
-    _usernameController.addListener(_checkCanAdd);
-    _passwordController.addListener(_checkCanAdd);
   }
 
   @override
@@ -36,24 +32,17 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
     _applicationController.dispose();
     _usernameController.dispose();
     _passwordController.dispose();
+    _secretKey2FAController.dispose();
     super.dispose();
-  }
-
-  void _checkCanAdd() {
-    setState(() {
-      _canAdd = _applicationController.text.isNotEmpty &&
-          _usernameController.text.isNotEmpty &&
-          _passwordController.text.isNotEmpty;
-    });
   }
 
   Future<void> _addToFirestore() async {
     try {
-      SystemChannels.textInput.invokeMethod('TextInput.hide');
       // Lấy giá trị từ các trường nhập liệu
       String application = _applicationController.text;
       String username = _usernameController.text;
       String password = _passwordController.text;
+      String secretKey2FA = _secretKey2FAController.text;
 
       // Kiểm tra xem các trường có dữ liệu hay không
       if (application.isNotEmpty &&
@@ -72,7 +61,7 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
           'n': encrypter.encrypt(application, iv: iv).base64,
           'u': encrypter.encrypt(username, iv: iv).base64,
           'p': encrypter.encrypt(password, iv: iv).base64,
-          's': encrypter.encrypt(password, iv: iv).base64,
+          's': encrypter.encrypt(secretKey2FA, iv: iv).base64,
           'm': iv.base64,
         };
         await documentRef.update({
@@ -83,6 +72,7 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
         _applicationController.clear();
         _usernameController.clear();
         _passwordController.clear();
+        _secretKey2FAController.clear();
 
         // Hiển thị thông báo thành công
         ScaffoldMessenger.of(context).showSnackBar(
@@ -95,7 +85,7 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
           'n': application,
           'u': username,
           'p': password,
-          's': password,
+          's': secretKey2FA,
           'm': iv.base64,
         };
         Map<String, String> result = dataResponse;
@@ -148,71 +138,108 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
-                          const Text(
-                            'Application',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
                           TextFormField(
                             controller: _applicationController,
                             decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              filled: true,
-                              fillColor: Colors.white,
-                              contentPadding: EdgeInsets.symmetric(
-                                vertical: 10.0,
-                                horizontal: 10.0,
+                              labelText: 'App',
+                              labelStyle: TextStyle(
+                                  color: Colors.white60,
+                                  fontWeight: FontWeight.bold),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white38,
+                                  width: 3.0,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white10,
+                                  width: 3.0,
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                          const Text(
-                            'Username/Email',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                            style: const TextStyle(
                               color: Colors.white,
                             ),
                           ),
+                          const SizedBox(height: 16.0),
                           TextFormField(
                             controller: _usernameController,
                             decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              filled: true,
-                              fillColor: Colors.white,
-                              contentPadding: EdgeInsets.symmetric(
-                                vertical: 10.0,
-                                horizontal: 10.0,
+                              labelText: 'Username',
+                              labelStyle: TextStyle(
+                                  color: Colors.white60,
+                                  fontWeight: FontWeight.bold),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white38,
+                                  width: 3.0,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white10,
+                                  width: 3.0,
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                          const Text(
-                            'Password',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                            style: const TextStyle(
                               color: Colors.white,
                             ),
                           ),
+                          const SizedBox(height: 16.0),
                           TextFormField(
                             controller: _passwordController,
                             decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              filled: true,
-                              fillColor: Colors.white,
-                              contentPadding: EdgeInsets.symmetric(
-                                vertical: 10.0,
-                                horizontal: 10.0,
+                              labelText: 'Password',
+                              labelStyle: TextStyle(
+                                  color: Colors.white60,
+                                  fontWeight: FontWeight.bold),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white38,
+                                  width: 3.0,
+                                ),
                               ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white10,
+                                  width: 3.0,
+                                ),
+                              ),
+                            ),
+                            style: const TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 16.0),
+                          TextFormField(
+                            controller: _secretKey2FAController,
+                            decoration: const InputDecoration(
+                              labelText: 'Secret key 2FA',
+                              labelStyle: TextStyle(
+                                  color: Colors.white60,
+                                  fontWeight: FontWeight.bold),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white38,
+                                  width: 3.0,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white10,
+                                  width: 3.0,
+                                ),
+                              ),
+                            ),
+                            style: const TextStyle(
+                              color: Colors.white,
                             ),
                           ),
                           const SizedBox(height: 15),
                           ElevatedButton(
-                            onPressed: _canAdd ? _addToFirestore : null,
+                            onPressed: _addToFirestore,
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white,
                               backgroundColor: Colors.deepPurpleAccent,

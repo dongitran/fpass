@@ -165,11 +165,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: FloatingActionButton(
                   elevation: 6.0,
                   onPressed: () async {
-                    final result = await Navigator.push<Map<String, String>>(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                AddPasswordPage(token: widget.token)));
+                    final result = await Navigator.of(context).push(
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) {
+                          return AddPasswordPage(token: widget.token);
+                        },
+                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          const begin = Offset(1.0, 0.0);
+                          const end = Offset.zero;
+                          const curve = Curves.easeInOut;
+                          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                          var offsetAnimation = animation.drive(tween);
+                          return SlideTransition(position: offsetAnimation, child: child);
+                        },
+                      ),
+                    );
 
                     if (result != null) {
                       setState(() {

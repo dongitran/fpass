@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'card-detail.dart';
 
 class CardsPage extends StatefulWidget {
   final List<Map<String, String>>? data;
@@ -41,12 +42,41 @@ class _CardsPageState extends State<CardsPage> {
                   children: [
                     Stack(
                       children: [
-                        _buildCreditCard(
-                          color: getColorOrDefault(i),
-                          username: widget.data![i]['u']!,
-                          password: widget.data![i]['p']!,
-                          appName: widget.data![i]['n']!,
-                          isPasswordVisible: _passwordVisible[i],
+                        GestureDetector(
+                          onTap: () {
+                            // Khi thẻ được nhấn, chuyển đến trang chi tiết và truyền dữ liệu
+                            Navigator.of(context).push(
+                              PageRouteBuilder(
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) {
+                                  return DetailPage(
+                                    appName: widget.data![i]['n']!,
+                                    username: widget.data![i]['u']!,
+                                    password: widget.data![i]['p']!,
+                                    secretKey2FA: '',
+                                  );
+                                },
+                                transitionsBuilder: (context, animation,
+                                    secondaryAnimation, child) {
+                                  const begin = Offset(1.0, 0.0);
+                                  const end = Offset.zero;
+                                  const curve = Curves.easeInOut;
+                                  var tween = Tween(begin: begin, end: end)
+                                      .chain(CurveTween(curve: curve));
+                                  var offsetAnimation = animation.drive(tween);
+                                  return SlideTransition(
+                                      position: offsetAnimation, child: child);
+                                },
+                              ),
+                            );
+                          },
+                          child: _buildCreditCard(
+                            color: getColorOrDefault(i),
+                            username: widget.data![i]['u']!,
+                            password: widget.data![i]['p']!,
+                            appName: widget.data![i]['n']!,
+                            isPasswordVisible: _passwordVisible[i],
+                          ),
                         ),
                         Positioned(
                           top: 0.0,

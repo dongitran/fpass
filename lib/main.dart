@@ -9,6 +9,7 @@ import 'utils/firebase-options.dart';
 import 'login_page.dart';
 import 'card.dart';
 import 'add-password.dart';
+import 'dart:async';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -170,13 +171,16 @@ class _MyHomePageState extends State<MyHomePage> {
                         pageBuilder: (context, animation, secondaryAnimation) {
                           return AddPasswordPage(token: widget.token);
                         },
-                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
                           const begin = Offset(1.0, 0.0);
                           const end = Offset.zero;
                           const curve = Curves.easeInOut;
-                          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                          var tween = Tween(begin: begin, end: end)
+                              .chain(CurveTween(curve: curve));
                           var offsetAnimation = animation.drive(tween);
-                          return SlideTransition(position: offsetAnimation, child: child);
+                          return SlideTransition(
+                              position: offsetAnimation, child: child);
                         },
                       ),
                     );

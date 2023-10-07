@@ -159,7 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              CardsPage(data: _data),
+              CardsPage(data: _data, token: widget.token),
               Container(
                 margin: const EdgeInsets.only(top: 1.0),
                 alignment: Alignment.center,

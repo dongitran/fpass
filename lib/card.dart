@@ -4,8 +4,9 @@ import 'card-detail.dart';
 
 class CardsPage extends StatefulWidget {
   final List<Map<String, String>>? data;
+  final String token;
 
-  const CardsPage({super.key, this.data});
+  const CardsPage({super.key, this.data, required this.token});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -50,10 +51,10 @@ class _CardsPageState extends State<CardsPage> {
                                 pageBuilder:
                                     (context, animation, secondaryAnimation) {
                                   return DetailPage(
-                                    appName: widget.data![i]['n']!,
-                                    username: widget.data![i]['u']!,
-                                    password: widget.data![i]['p']!,
                                     secretKey2FA: '',
+                                    token: widget.token,
+                                    data: widget.data,
+                                    index: i,
                                   );
                                 },
                                 transitionsBuilder: (context, animation,

@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:encrypt/encrypt.dart' as encrypt;
 
 class AddPasswordPage extends StatefulWidget {
@@ -73,7 +72,8 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
           'n': encrypter.encrypt(application, iv: iv).base64,
           'u': encrypter.encrypt(username, iv: iv).base64,
           'p': encrypter.encrypt(password, iv: iv).base64,
-          'm': iv.base64
+          's': encrypter.encrypt(password, iv: iv).base64,
+          'm': iv.base64,
         };
         await documentRef.update({
           "pass": FieldValue.arrayUnion([dataUpdateEncrypt])

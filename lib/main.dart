@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 
-import 'firebase_options.dart';
+import 'utils/firebase-options.dart';
 import 'login_page.dart';
 import 'card.dart';
 import 'add-password.dart';

@@ -1,6 +1,7 @@
 # fpass
 
-fpass is a mobile application created to securely store and manage passwords and usernames.\
+fpass is a mobile application created to securely store and manage passwords and usernames.
+
 The application is developed using Flutter and does not rely on a backend server.\
 Instead, it leverages Firebase Firestore as the database to securely store encrypted password and username data. Prior to being stored in Firestore, both usernames and passwords undergo encryption to bolster security.
 

@@ -20,7 +20,7 @@ Instead, it leverages Firebase Firestore as the database to securely store encry
 
 Below is an illustrative image of the project:
 
-![Demo](./images/demo.jpg)
+<img src="./images/demo.jpg" alt="Demo" width="400">
 
 If you need assistance or have any questions, please feel free to contact us.
 

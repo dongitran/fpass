@@ -64,10 +64,14 @@ class MyApp extends StatelessWidget {
                 final ivBase64 = outputMap?['m'];
                 outputMap.forEach((key, value) {
                   if (key != 'm' && ivBase64 != null) {
-                    final encrypted = encrypt.Encrypted.fromBase64(value);
-                    final ivDecrypt = encrypt.IV.fromBase64(ivBase64);
-                    outputMap[key] =
-                        encrypter.decrypt(encrypted, iv: ivDecrypt);
+                    if (value == '') {
+                      outputMap[key] = '';
+                    } else {
+                      final encrypted = encrypt.Encrypted.fromBase64(value);
+                      final ivDecrypt = encrypt.IV.fromBase64(ivBase64);
+                      outputMap[key] =
+                          encrypter.decrypt(encrypted, iv: ivDecrypt);
+                    }
                   }
                 });
 

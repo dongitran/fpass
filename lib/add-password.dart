@@ -43,6 +43,8 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
       String username = _usernameController.text;
       String password = _passwordController.text;
       String secretKey2FA = _secretKey2FAController.text;
+      print('secretKey2FA');
+      print(secretKey2FA == '');
 
       // Kiểm tra xem các trường có dữ liệu hay không
       if (application.isNotEmpty &&
@@ -61,7 +63,9 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
           'n': encrypter.encrypt(application, iv: iv).base64,
           'u': encrypter.encrypt(username, iv: iv).base64,
           'p': encrypter.encrypt(password, iv: iv).base64,
-          's': encrypter.encrypt(secretKey2FA, iv: iv).base64,
+          's': secretKey2FA == ''
+              ? ''
+              : encrypter.encrypt(secretKey2FA, iv: iv).base64,
           'm': iv.base64,
         };
         await documentRef.update({

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
+import 'dart:async';
+import 'package:otp/otp.dart';
 
 class DetailPage extends StatefulWidget {
   final String secretKey2FA;
@@ -9,7 +11,8 @@ class DetailPage extends StatefulWidget {
   final List<Map<String, String>>? data;
   final int index;
 
-  DetailPage({
+  const DetailPage({
+    super.key,
     required this.secretKey2FA,
     required this.token,
     required this.index,
@@ -25,8 +28,14 @@ class _DetailPageState extends State<DetailPage> {
   late TextEditingController _usernameController;
   late TextEditingController _passwordController;
   late TextEditingController _secretKey2FAController;
+  late TextEditingController _otpController;
 
+  bool secretKey2FAExist = false;
+  bool isValidSecretKey2FA = false;
   bool isDataChanged = false;
+  late String otp = "";
+  late Timer _timer;
+  late int timerCounter;
 
   @override
   void initState() {
@@ -39,6 +48,28 @@ class _DetailPageState extends State<DetailPage> {
         TextEditingController(text: widget.data![widget.index]['p']);
     _secretKey2FAController =
         TextEditingController(text: widget.data![widget.index]['s']);
+    _otpController = TextEditingController(text: '123');
+
+    secretKey2FAExist = _secretKey2FAController.text.isNotEmpty;
+
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final secret = widget.data![widget.index]['s'];
+    if (secret!.isNotEmpty) {
+      // Generate the OTPpr
+      try {
+        final otpNumber = OTP.generateTOTPCode(secret, now,
+            algorithm: Algorithm.SHA1, isGoogle: true);
+
+        setState(() {
+          _otpController = TextEditingController(
+              text: numberToStringWithPadding(otpNumber, 6));
+          isValidSecretKey2FA = true;
+          startTimer();
+        });
+      } catch (error) {
+        isValidSecretKey2FA = false;
+      }
+    }
 
     // Theo dõi sự thay đổi trong các trường dữ liệu và cập nhật biến isDataChanged
     _appNameController.addListener(handleDataChange);
@@ -61,6 +92,36 @@ class _DetailPageState extends State<DetailPage> {
         isDataChanged = false; // Đánh dấu là không có sự thay đổi
       });
     }
+  }
+
+  void startTimer() {
+    const oneSec = Duration(seconds: 1);
+
+    final secondCurrent = DateTime.now().second;
+    timerCounter = 30 - (secondCurrent % 30);
+    _timer = Timer.periodic(
+      oneSec,
+      (Timer timer) {
+        final now = DateTime.now().millisecondsSinceEpoch;
+        final secret = widget.data![widget.index]['s'];
+        final otpNumber = OTP.generateTOTPCode(secret!, now,
+            algorithm: Algorithm.SHA1, isGoogle: true);
+
+        setState(() {
+          _otpController = TextEditingController(
+              text: numberToStringWithPadding(otpNumber, 6));
+        });
+        if (mounted) {
+          final secondCurrent = DateTime.now().second;
+
+          setState(() {
+            timerCounter = 30 - (secondCurrent % 30);
+          });
+        } else {
+          timer.cancel();
+        }
+      },
+    );
   }
 
   @override
@@ -188,6 +249,27 @@ class _DetailPageState extends State<DetailPage> {
                           color: Colors.white,
                         ),
                       ),
+                      const SizedBox(height: 16.0),
+                      if (secretKey2FAExist && isValidSecretKey2FA)
+                        TextFormField(
+                          controller: _otpController,
+                          enabled: false,
+                          decoration: const InputDecoration(
+                            labelText: "OTP",
+                            labelStyle: TextStyle(
+                                color: Colors.white60,
+                                fontWeight: FontWeight.bold),
+                            disabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Color(0xFFf0ebd8),
+                                width: 3.0,
+                              ),
+                            ),
+                          ),
+                          style: const TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
                       const SizedBox(height: 32),
                       Container(
                         width: double.infinity,
@@ -351,6 +433,18 @@ class _DetailPageState extends State<DetailPage> {
     _usernameController.dispose();
     _passwordController.dispose();
     _secretKey2FAController.dispose();
+    _otpController.dispose();
+    _timer.cancel();
     super.dispose();
+  }
+
+  String numberToStringWithPadding(int number, int length) {
+    String numberString = number.toString();
+    if (numberString.length >= length) {
+      return numberString;
+    } else {
+      String padding = '0' * (length - numberString.length);
+      return '$padding$numberString';
+    }
   }
 }

@@ -12,7 +12,7 @@ Instead, it leverages Firebase Firestore as the database to securely store encry
 ## Timeline
 - [x] Implement password encryption and decryption, store securely on Firebase
 - [x] Add card detail page
-- [ ] Implement Two-Factor Authentication (TOTP)
+- [x] Implement Two-Factor Authentication (TOTP)
 - [ ] Add QR code scanning for 2FA
 - [ ] Deploy CHPlay
 

@@ -43,8 +43,6 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
       String username = _usernameController.text;
       String password = _passwordController.text;
       String secretKey2FA = _secretKey2FAController.text;
-      print('secretKey2FA');
-      print(secretKey2FA == '');
 
       // Kiểm tra xem các trường có dữ liệu hay không
       if (application.isNotEmpty &&

@@ -64,7 +64,7 @@ class _PinPageState extends State<PinPage> {
                   fieldStyle: FieldStyle.box,
                   onCompleted: (pin) {
                     print("Completed: $pin");
-                    Navigator.pop<Map<String, String>>(context);
+                    Navigator.pop<String>(context, pin);
                   },
                   otpFieldStyle: OtpFieldStyle(
                     backgroundColor: Colors.white12,

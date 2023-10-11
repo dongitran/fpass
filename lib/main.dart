@@ -81,7 +81,9 @@ class MyApp extends StatelessWidget {
             }
 
             return isLoggedIn
-                ? PinPage()
+                ? PinPage(
+                    title: 'Enter your passcode',
+                  )
                 : const LoginPage();
           }
         },

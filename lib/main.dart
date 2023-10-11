@@ -10,6 +10,7 @@ import 'login-page.dart';
 import 'card.dart';
 import 'add-password.dart';
 import 'dart:async';
+import 'pin.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -80,10 +81,7 @@ class MyApp extends StatelessWidget {
             }
 
             return isLoggedIn
-                ? MyHomePage(
-                    title: 'fpass',
-                    data: dataPass,
-                    token: snapshot.data?['token'])
+                ? PinPage()
                 : const LoginPage();
           }
         },

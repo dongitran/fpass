@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:fpass/utils/generator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddPasswordPage extends StatefulWidget {
   const AddPasswordPage({
@@ -52,7 +54,14 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
             .collection('fpassToken')
             .doc(widget.token);
 
-        final key = encrypt.Key.fromUtf8(widget.token);
+        SharedPreferences prefs =
+                                          await SharedPreferences.getInstance();
+        final userName = prefs.getString('userName');
+        final token = widget.token;
+        final secretToEncrypt = '$token---fpass---$userName';
+        final secretToEncryptHash = generateMd5(secretToEncrypt);
+
+        final key = encrypt.Key.fromUtf8(secretToEncryptHash);
         final iv = encrypt.IV.fromLength(16);
         final encrypter =
             encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.cbc));

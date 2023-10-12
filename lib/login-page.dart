@@ -151,14 +151,6 @@ class _LoginPageState extends State<LoginPage> {
                                       }
 
                                       print('asdf');
-                                      // ignore: use_build_context_synchronously
-                                      // Navigator.pushReplacement(
-                                      //   context,
-                                      //   MaterialPageRoute(
-                                      //     builder: (context) => MyHomePage(
-                                      //         title: 'fpass', data: null, token: md5Hash),
-                                      //   ),
-                                      // );
                                       final pin =
                                           await Navigator.of(context).push(
                                         PageRouteBuilder(
@@ -166,6 +158,7 @@ class _LoginPageState extends State<LoginPage> {
                                               secondaryAnimation) {
                                             return PinPage(
                                               title: 'Create your passcode',
+                                              isCreate: true,
                                             );
                                           },
                                           transitionsBuilder: (context,
@@ -195,25 +188,48 @@ class _LoginPageState extends State<LoginPage> {
                                         loadingForSavePin = true;
                                       });
 
-                                      String input =
+                                      String userNameAndPassword =
                                           '$username---fpass---$password';
-                                      String md5Hash = generateMd5(input);
+                                      String userNameAndPasswordMd5Hash =
+                                          generateMd5(userNameAndPassword);
+                                      String userNameAndPin =
+                                          '$username---fpass---$pin';
+                                      String pinAndUserNameMd5Hash =
+                                          generateMd5(userNameAndPin);
 
                                       Map<String, dynamic> dataToInsert = {
                                         'init': 'true',
-                                        'pin': generateMd5(pin),
+                                        'pin':
+                                            generateMd5(pinAndUserNameMd5Hash),
                                       };
                                       await FirebaseFirestore.instance
                                           .collection('fpassToken')
-                                          .doc(md5Hash)
+                                          .doc(userNameAndPasswordMd5Hash)
                                           .set(dataToInsert);
-                                      
+
                                       SharedPreferences prefs =
                                           await SharedPreferences.getInstance();
+                                      prefs.setString('userName', username);
+                                      prefs.setString('fpassTokenValue',
+                                          userNameAndPasswordMd5Hash);
                                       prefs.setString(
-                                          'fpassTokenValue', md5Hash);
-                                      prefs.setString(
-                                          'pin', md5Hash);
+                                          'pin', pinAndUserNameMd5Hash);
+
+                                      Future.delayed(
+                                          const Duration(milliseconds: 2000),
+                                          () {
+                                        // ignore: use_build_context_synchronously
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => MyHomePage(
+                                                title: 'fpass',
+                                                data: null,
+                                                token:
+                                                    userNameAndPasswordMd5Hash),
+                                          ),
+                                        );
+                                      });
                                     }
                                   : null,
                               child: const Text('Login'),

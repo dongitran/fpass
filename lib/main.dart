@@ -50,39 +50,12 @@ class MyApp extends StatelessWidget {
                 : null;
             List<Map<String, String>>? dataPass;
 
-            if (data != null && data["pass"] != null) {
-              final key = encrypt.Key.fromUtf8(snapshot.data?['token']);
-              final encrypter = encrypt.Encrypter(
-                  encrypt.AES(key, mode: encrypt.AESMode.cbc));
-
-              dataPass = data["pass"].map<Map<String, String>>((inputMap) {
-                final Map<String, String> outputMap = {};
-
-                inputMap.forEach((key, value) {
-                  outputMap[key] = value;
-                });
-
-                final ivBase64 = outputMap?['m'];
-                outputMap.forEach((key, value) {
-                  if (key != 'm' && ivBase64 != null) {
-                    if (value == '') {
-                      outputMap[key] = '';
-                    } else {
-                      final encrypted = encrypt.Encrypted.fromBase64(value);
-                      final ivDecrypt = encrypt.IV.fromBase64(ivBase64);
-                      outputMap[key] =
-                          encrypter.decrypt(encrypted, iv: ivDecrypt);
-                    }
-                  }
-                });
-
-                return outputMap;
-              }).toList();
-            }
-
             return isLoggedIn
                 ? PinPage(
                     title: 'Enter your passcode',
+                    isCreate: false,
+                    token: snapshot.data?['token'],
+                    data: data?['pass'],
                   )
                 : const LoginPage();
           }

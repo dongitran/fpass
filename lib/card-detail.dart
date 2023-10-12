@@ -339,8 +339,13 @@ class _DetailPageState extends State<DetailPage> {
 
                             // Quay lại màn hình trước
                             // ignore: use_build_context_synchronously
-                            Navigator.pop<List<Map<String, String>>?>(
-                                currentContext, widget.data);
+                            Future.delayed(
+                              const Duration(milliseconds: 300),
+                              () {
+                                Navigator.pop<List<Map<String, String>>?>(
+                                    currentContext, widget.data);
+                              },
+                            );
                           },
                           child: const Text('Update'),
                         ),

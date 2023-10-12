@@ -40,6 +40,8 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
 
   Future<void> _addToFirestore() async {
     try {
+      SystemChannels.textInput.invokeMethod('TextInput.hide');
+
       // Lấy giá trị từ các trường nhập liệu
       String application = _applicationController.text;
       String username = _usernameController.text;
@@ -54,8 +56,7 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
             .collection('fpassToken')
             .doc(widget.token);
 
-        SharedPreferences prefs =
-                                          await SharedPreferences.getInstance();
+        SharedPreferences prefs = await SharedPreferences.getInstance();
         final userName = prefs.getString('userName');
         final token = widget.token;
         final secretToEncrypt = '$token---fpass---$userName';
@@ -88,7 +89,7 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
         // Hiển thị thông báo thành công
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Dữ liệu đã được thêm thành công.'),
+            content: Text('Added successfully.'),
           ),
         );
 
@@ -101,7 +102,12 @@ class _AddPasswordPageState extends State<AddPasswordPage> {
         };
         Map<String, String> result = dataResponse;
 
-        Navigator.pop<Map<String, String>>(context, result);
+        Future.delayed(
+          const Duration(milliseconds: 300),
+          () {
+            Navigator.pop<Map<String, String>>(context, result);
+          },
+        );
       } else {
         // Hiển thị thông báo nếu một trong các trường nhập liệu còn trống
         ScaffoldMessenger.of(context).showSnackBar(

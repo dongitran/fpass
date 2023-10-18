@@ -33,106 +33,63 @@ class _CardsPageState extends State<CardsPage> {
     List<Map<String, String>>? dataRender = widget.data;
 
     return SingleChildScrollView(
-      child: Container(
-        padding: const EdgeInsets.all(1.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            if (dataRender != null)
-              for (var i = 0; i < dataRender!.length; i++)
-                Column(
-                  children: [
-                    Stack(
-                      children: [
-                        GestureDetector(
-                          onTap: () async {
-                            // Khi thẻ được nhấn, chuyển đến trang chi tiết và truyền dữ liệu
-                            final result = await Navigator.of(context).push(
-                              PageRouteBuilder(
-                                pageBuilder:
-                                    (context, animation, secondaryAnimation) {
-                                  return DetailPage(
-                                    secretKey2FA: '',
-                                    token: widget.token,
-                                    data: dataRender,
-                                    index: i,
-                                  );
-                                },
-                                transitionsBuilder: (context, animation,
-                                    secondaryAnimation, child) {
-                                  const begin = Offset(1.0, 0.0);
-                                  const end = Offset.zero;
-                                  const curve = Curves.easeInOut;
-                                  var tween = Tween(begin: begin, end: end)
-                                      .chain(CurveTween(curve: curve));
-                                  var offsetAnimation = animation.drive(tween);
-                                  return SlideTransition(
-                                      position: offsetAnimation, child: child);
-                                },
-                              ),
+      child: Column(
+        children: <Widget>[
+          if (dataRender != null)
+            for (var i = 0; i < dataRender!.length; i++)
+              Column(
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      // Khi thẻ được nhấn, chuyển đến trang chi tiết và truyền dữ liệu
+                      final result = await Navigator.of(context).push(
+                        PageRouteBuilder(
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) {
+                            return DetailPage(
+                              secretKey2FA: '',
+                              token: widget.token,
+                              data: dataRender,
+                              index: i,
                             );
-
-                            // Cập nhật widget.data với giá trị mới
-                            print(result);
-                            if (result != null) {
-                              setState(() {
-                                dataRender = result;
-                              });
-                            }
                           },
-                          child: _buildCreditCard(
-                            cardKey: GlobalKey(),
-                            color: getColorOrDefault(i),
-                            username: dataRender![i]['u']!,
-                            password: dataRender![i]['p']!,
-                            appName: dataRender![i]['n']!,
-                            isPasswordVisible: _passwordVisible[i],
-                          ),
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                            const begin = Offset(1.0, 0.0);
+                            const end = Offset.zero;
+                            const curve = Curves.easeInOut;
+                            var tween = Tween(begin: begin, end: end)
+                                .chain(CurveTween(curve: curve));
+                            var offsetAnimation = animation.drive(tween);
+                            return SlideTransition(
+                                position: offsetAnimation, child: child);
+                          },
                         ),
-                        Positioned(
-                          top: 0.0,
-                          right: 8.0,
-                          child: IconButton(
-                            icon: Icon(
-                              _passwordVisible[i]
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              color: Colors.grey,
-                            ),
-                            onPressed: () {
-                              // Check and reset timer
-                              if (_timer != null && _timer!.isActive) {
-                                _timer!.cancel();
-                              }
+                      );
 
-                              _passwordVisible.fillRange(0, i, false);
-                              _passwordVisible.fillRange(
-                                  i + 1, _passwordVisible.length, false);
-                              _passwordVisible[i] = !_passwordVisible[i];
-                              setState(() {
-                                _passwordVisible;
-                              });
-
-                              // Set timer for hide password
-                              if (_passwordVisible[i]) {
-                                _timer = Timer(const Duration(seconds: 3), () {
-                                  setState(() {
-                                    _passwordVisible[i] = false;
-                                  });
-                                });
-                              }
-                            },
-                          ),
-                        ),
-                      ],
+                      // Cập nhật widget.data với giá trị mới
+                      print(result);
+                      if (result != null) {
+                        setState(() {
+                          dataRender = result;
+                        });
+                      }
+                    },
+                    child: _buildCreditCard(
+                      cardKey: GlobalKey(),
+                      color: getColorOrDefault(i),
+                      username: dataRender![i]['u']!,
+                      password: dataRender![i]['p']!,
+                      appName: dataRender![i]['n']!,
+                      isPasswordVisible: _passwordVisible[i],
                     ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                  ],
-                )
-          ],
-        ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                ],
+              )
+        ],
       ),
     );
   }

@@ -20,20 +20,15 @@ Instead, it leverages Firebase Firestore as the database to securely store encry
 
 Below is an illustrative image of the project:
 
-<div style="display: flex; justify-content: space-between;">
-    <div style="margin-right: 10px;">
-        <img src="./images/demo3.jpg" alt="Demo" width="400">
-    </div>
-    <div style="margin-right: 10px;">
-        <img src="./images/demo2.jpg" alt="Demo" width="400">
-    </div>
-    <div style="margin-right: 10px;">
-        <img src="./images/demo1.jpg" alt="Demo" width="400">
-    </div>
-    <div>
-        <img src="./images/demo4.jpg" alt="Demo" width="400">
-    </div>
-</div>
+<img src="./images/demo3.jpg" alt="Demo" width="400">
+&nbsp;&nbsp;&nbsp;
+<img src="./images/demo2.jpg" alt="Demo" width="400">
+
+&nbsp;
+
+<img src="./images/demo1.jpg" alt="Demo" width="400">
+&nbsp;&nbsp;&nbsp;
+<img src="./images/demo4.jpg" alt="Demo" width="400">
 
 If you need assistance or have any questions, please feel free to contact us.
 
